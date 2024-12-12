@@ -1,7 +1,6 @@
 // An instructor can only access their own students' data.
 const router = require("express").Router();
-const { Reviews } = require("@mui/icons-material");
-const db = require("../db");
+const db = require("../db/index");
 
 
 const isLoggedIn = async (req, res, next) => {
@@ -39,15 +38,6 @@ const findUserWithToken = async (token) => {
     return response.rows[0];
 
 }
-
-
-// Deny access if user is not logged in
-router.use((req, res, next) => {
-    if (!req.user) {
-        return res.status(401).send("You must be logged in to do that.");
-    }
-    next();
-});
 
 
 // Get all items
@@ -263,6 +253,14 @@ router.delete("/:userId/reviews/:reviewId", isLoggedIn, async (req, res, next) =
     } catch (error) {
         next(error);
     }
+});
+
+// Deny access if user is not logged in
+router.use((req, res, next) => {
+    if (!req.user) {
+        return res.status(401).send("You must be logged in to do that.");
+    }
+    next();
 });
 
 
