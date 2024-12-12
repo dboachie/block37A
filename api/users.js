@@ -216,20 +216,16 @@ router.put("/:userId/comments/:commentId", isLoggedIn, async (req, res, next) =>
 
 
 // Delete a comment
-router.delete("/:userId/comments/:commentId", isLoggedIn, async (req, res, next) => {
-    const { userId, commentId } = req.params
+router.delete("/:userId/comments/:reviewId", isLoggedIn, async (req, res, next) => {
+    const { userId, reviewId } = req.params
 
     try {
         const delete_comments = await db.query(
             "DELETE FROM comments WHERE user_id = $1 AND review_id = $2 RETURNING *",
-            [req.params.userId, req.params.commentId]
+            [userId, reviewId]
         );
 
-        if (!user) {
-            return res.status(404).send("User not found.");
-        }
-
-        res.send(user);
+        res.status(204).send({ message: "Comment deleted" })
     } catch (error) {
         next(error);
     }
@@ -242,14 +238,10 @@ router.delete("/:userId/reviews/:reviewId", isLoggedIn, async (req, res, next) =
     try {
         const delete_reviews = await db.query(
             "DELETE FROM reviews WHERE review_id = $1 RETURNING *",
-            [req.params.reviewId]
+            [reviewId]
         );
+        res.status(204).send({ message: "Review deleted" })
 
-        if (!user) {
-            return res.status(404).send("User not found.");
-        }
-
-        res.send(user);
     } catch (error) {
         next(error);
     }
